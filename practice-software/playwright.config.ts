@@ -4,7 +4,7 @@ import path from 'node:path';
 process.loadEnvFile(path.resolve(__dirname, '.env'));
 
 const requiredEnv = [
-  'BASE_URL',
+  'BASE_URL', 'API_URL',
   'ADMIN_NAME', 'ADMIN_EMAIL', 'ADMIN_PASSWORD',
   'USER_NAME', 'USER_EMAIL', 'USER_PASSWORD',
 ];

@@ -11,16 +11,24 @@ export class NavMenu {
     return this.menuBar.getByRole('link', { name: 'Inloggen' });
   }
 
-  get adminDashboardLink() {
-    return this.menuBar.getByRole('link', { name: 'Dashboard' });
+  userMenuButton(name: string) {
+    return this.menuBar.getByRole('button', { name });
   }
 
   get myAccountLink() {
     return this.menuBar.getByRole('link', { name: 'Mijn account' });
   }
 
-  userMenuButton(name: string) {
-    return this.menuBar.getByRole('button', { name });
+  get myProfileLink() {
+    return this.menuBar.getByRole('link', { name: 'Mijn profiel' });
+  }
+
+  get adminDashboardLink() {
+    return this.menuBar.getByRole('link', { name: 'Dashboard' });
+  }
+
+  get signOutItem() {
+    return this.menuBar.getByText('Uitloggen');
   }
 
   async goToSignIn(): Promise<void> {
@@ -29,6 +37,16 @@ export class NavMenu {
 
   async openUserMenu(name: string): Promise<void> {
     await this.userMenuButton(name).click();
+  }
+
+  async goToMyProfile(name: string): Promise<void> {
+    await this.openUserMenu(name);
+    await this.myProfileLink.click();
+  }
+
+  async signOut(name: string): Promise<void> {
+    await this.openUserMenu(name);
+    await this.signOutItem.click();
   }
 
   async expectLoggedInAsAdmin(name: string): Promise<void> {

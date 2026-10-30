@@ -2,6 +2,7 @@ import { APIRequestContext, APIResponse, request } from '@playwright/test';
 
 export interface ApiResult {
   status: number;
+  headers: Record<string, string>;
   body: unknown;
 }
 
@@ -46,6 +47,7 @@ export class ApiClient {
     const text = await response.text();
     return {
       status: response.status(),
+      headers: response.headers(),
       body: text ? JSON.parse(text) : undefined,
     };
   }

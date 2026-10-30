@@ -24,6 +24,14 @@ export class LoginPage {
     return this.page.getByRole('button', { name: 'Login' });
   }
 
+  get totpCodeInput() {
+    return this.page.getByLabel('TOTP-code');
+  }
+
+  get verifyTotpButton() {
+    return this.page.getByRole('button', { name: 'TOTP verifiëren' });
+  }
+
   async expectLoaded(): Promise<void> {
     await expect(this.title).toBeVisible();
   }
@@ -32,5 +40,10 @@ export class LoginPage {
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);
     await this.loginButton.click();
+  }
+
+  async verifyTotp(code: string): Promise<void> {
+    await this.totpCodeInput.fill(code);
+    await this.verifyTotpButton.click();
   }
 }
