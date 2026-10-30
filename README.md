@@ -4,7 +4,7 @@ Automated tests built with Playwright and TypeScript.
 
 ## APIHelper
 
-`APIHelper` is a standalone module for sending API requests, separate from the tests that use it.
+`api-helper` is a standalone module for sending API requests, separate from the tests that use it.
 
 **Goals**
 

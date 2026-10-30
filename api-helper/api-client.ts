@@ -1,6 +1,6 @@
 import { APIRequestContext, APIResponse, request } from '@playwright/test';
 
-export interface APIResult {
+export interface ApiResult {
   status: number;
   body: unknown;
 }
@@ -15,21 +15,21 @@ export class ApiClient {
     this.authorizationToken = token;
   }
 
-  async get(path: string): Promise<APIResult> {
+  async get(path: string): Promise<ApiResult> {
     const context = await this.getRequestContext();
     const response = await context.get(`${this.baseUrl}${path}`, {
       headers: this.authorizationHeader(),
     });
-    return this.toAPIResult(response);
+    return this.toApiResult(response);
   }
 
-  async post(path: string, body: unknown): Promise<APIResult> {
+  async post(path: string, body: unknown): Promise<ApiResult> {
     const context = await this.getRequestContext();
     const response = await context.post(`${this.baseUrl}${path}`, {
       data: body,
       headers: this.authorizationHeader(),
     });
-    return this.toAPIResult(response);
+    return this.toApiResult(response);
   }
 
   async close(): Promise<void> {
@@ -42,7 +42,7 @@ export class ApiClient {
     return this.requestContext;
   }
 
-  private async toAPIResult(response: APIResponse): Promise<APIResult> {
+  private async toApiResult(response: APIResponse): Promise<ApiResult> {
     const text = await response.text();
     return {
       status: response.status(),
