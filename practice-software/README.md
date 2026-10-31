@@ -14,8 +14,10 @@ The navigation menu is a separate class, `NavMenu`, that each page object holds 
 ### Page object format
 
 - `page` is passed to the constructor.
-- Each element is a getter that returns a locator, so every locator is defined in one place.
-- Actions and checks are methods that use those getters, for example `login()` and `expectLoaded()`.
+- Each element is a private getter that returns a locator, so every locator is defined in one place.
+- Actions and checks are public methods that use those getters, for example `login()` and `expectLoaded()`. Tests only talk to a page through these methods, never through a locator.
+- Steps that only exist to build a public method, such as `NavMenu.openUserMenu()`, are private too.
+- Order in a class: the private getters first, then the public methods, then the private steps.
 - Locators follow Playwright's preference: `getByRole` and `getByLabel` first.
 
 ### Language
@@ -51,12 +53,18 @@ const test = mergeTests(pagesTest, apiTest);
 
 ### Test data
 
-- `test-data/` holds fixed data as plain objects, for example `totpUser` with a first and last name.
-- Values that must be unique per run, such as an email address and password, come from `utils/unique-credentials.ts` and are added in the test:
+Every test user is based on one `User` type in `test-data/user.ts`. Only `firstName` and `lastName` are required; the other fields, including `email` and `password`, are optional.
+
+- `test-data/users/` holds one file per test user, for example `totp-user.ts` and `registration-user-custom-address.ts`.
+- A user that fills in the whole registration form is typed as `Required<User>`, so a forgotten field is a type error in the data file. `RegisterPage` only accepts such a complete user (`Registration = Required<User>`).
+- The display name is not stored; `fullName(user)` derives it from the first and last name.
+- Email addresses and passwords must be unique per run, so they come from `utils/unique-credentials.ts`. A user file can set them itself, so the test uses the user as is:
 
 ```ts
-const user = { ...totpUser, email: uniqueEmail(), password: uniquePassword() };
+const user = registrationUserCustomAddress;
 ```
+
+`uniqueEmail()` adds a counter to the timestamp, because user files are imported in the same millisecond and would otherwise get the same address.
 
 ### API helpers
 
@@ -69,3 +77,40 @@ Helpers that call the API live in `utils/api/`, for example `registerUser()`. Te
 The code is calculated with the server's time instead of the local clock: `fetchServerTimeMs()` reads the `Date` header of an API response. The server only accepts codes up to 30 seconds off, and a local clock can easily differ more than that.
 
 TOTP cannot be disabled on the site once it is enabled, so the TOTP test always uses a newly registered user.
+
+### Registration
+
+The registration tests do not stop at the redirect to the login page. After registering, the test logs in as the new user and checks the stored details on the profile page, so it proves the data was actually saved.
+
+There are two tests:
+
+- **Every field filled in**: the test fills in the street, city and state itself.
+- **Required fields only**: the site looks up the address from the postcode and house number; the test checks the filled-in street, city and state before registering.
+
+#### How `RegisterPage` is built
+
+The page object follows the two tests, from one public method per flow down to private steps:
+
+```
+public:   registerWithAllFields(user)          registerWithRequiredFields(user)
+private:  ├── fillRequiredFields(user)         ├── fillRequiredFields(user)
+          ├── fillOtherFields(user)            ├── expectAutoFilledValues(user)
+          └── click Register                   └── click Register
+```
+
+- **One method per flow**: a test registers in one line, so the test reads as the scenario and not as a list of fields.
+- **Only the flows are public**: the steps are private, so a test cannot run them in a different order or skip one. The class lists the public methods first, then the private steps in the order they are called.
+- **Shared required fields**: both flows fill the same required fields, so they live in one method, `fillRequiredFields()`. The flows only differ in what happens to the street, city and state.
+- **Street, city and state separately**: `fillOtherFields()` fills them in by hand; `expectAutoFilledValues()` checks what the postcode lookup filled in. These are the only two places that touch those fields.
+- **Check before submitting**: the looked-up address can only be checked while the form is still open, so `expectAutoFilledValues()` runs inside the flow, before the Register button is clicked.
+- **One user object**: every method takes a `Registration` (`Required<User>`) instead of separate values, so the test data decides what is filled in and the type makes sure nothing is missing.
+- **Waiting for the lookup is hidden**: `waitForAddressLookups()` is a private step of `fillRequiredFields()`. The test does not need to know that the form waits for an API response; see the workaround below. The wait starts before the postcode is filled in, so the response cannot arrive before Playwright listens for it.
+
+### Known workaround: double postcode lookup
+
+The site sends the postcode lookup twice. The second response overwrites a street, city and state that were already filled in, so `RegisterPage` waits for both lookups before it continues. This is marked as a workaround in two places:
+
+- a `TODO` comment on `waitForAddressLookups()` in `pages/register-page.ts`;
+- an `issue` annotation on the `Register` describe block, so it shows up in the test report.
+
+Remove the workaround once it is confirmed that the double lookup is intended, or once it is fixed.
