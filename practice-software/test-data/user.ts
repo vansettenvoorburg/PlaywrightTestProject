@@ -1,6 +1,8 @@
 export type User = {
   firstName: string;
   lastName: string;
+  email: string;
+  password: string;
   dateOfBirth?: string;
   country?: string;
   postalCode?: string;
@@ -9,8 +11,6 @@ export type User = {
   city?: string;
   state?: string;
   phone?: string;
-  email?: string;
-  password?: string;
 };
 
 export function fullName(user: User): string {

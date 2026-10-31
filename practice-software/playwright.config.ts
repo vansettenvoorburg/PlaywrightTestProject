@@ -5,8 +5,8 @@ process.loadEnvFile(path.resolve(__dirname, '.env'));
 
 const requiredEnv = [
   'BASE_URL', 'API_URL',
-  'ADMIN_NAME', 'ADMIN_EMAIL', 'ADMIN_PASSWORD',
-  'USER_NAME', 'USER_EMAIL', 'USER_PASSWORD',
+  'ADMIN_EMAIL', 'ADMIN_PASSWORD',
+  'USER_EMAIL', 'USER_PASSWORD',
 ];
 for (const name of requiredEnv) {
   if (!process.env[name]) throw new Error(`${name} is missing in .env`);

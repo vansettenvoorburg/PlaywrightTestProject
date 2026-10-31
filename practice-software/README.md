@@ -53,12 +53,13 @@ const test = mergeTests(pagesTest, apiTest);
 
 ### Test data
 
-Every test user is based on one `User` type in `test-data/user.ts`. Only `firstName` and `lastName` are required; the other fields, including `email` and `password`, are optional.
+Every test user is based on one `User` type in `test-data/user.ts`. Every user can log in, so `firstName`, `lastName`, `email` and `password` are required; the other fields are optional.
 
-- `test-data/users/` holds one file per test user, for example `totp-user.ts` and `registration-user-custom-address.ts`.
+- `test-data/users/` holds one file per test user, for example `totp-user.ts` and `registration-user-custom-address.ts`. Each user only fills in the fields its tests use.
 - A user that fills in the whole registration form is typed as `Required<User>`, so a forgotten field is a type error in the data file. `RegisterPage` only accepts such a complete user (`Registration = Required<User>`).
+- The existing accounts `adminUser` and `customerUser` take their email address and password from `.env`, because those can differ per environment. Their names are stored in the user file.
 - The display name is not stored; `fullName(user)` derives it from the first and last name.
-- Email addresses and passwords must be unique per run, so they come from `utils/unique-credentials.ts`. A user file can set them itself, so the test uses the user as is:
+- For new users, email addresses and passwords must be unique per run, so they come from `utils/unique-credentials.ts`. The user file sets them itself, so the test uses the user as is:
 
 ```ts
 const user = registrationUserCustomAddress;
