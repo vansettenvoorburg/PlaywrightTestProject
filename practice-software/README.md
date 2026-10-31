@@ -67,9 +67,20 @@ const user = registrationUserCustomAddress;
 
 `uniqueEmail()` adds a counter to the timestamp, because user files are imported in the same millisecond and would otherwise get the same address.
 
+Test products follow the same pattern: one `Product` type in `test-data/product.ts` and one file per product in `test-data/products/`, for example `hammer-product.ts`.
+
+- The product name contains a timestamp, so a search only finds the product of this run.
+- Category, brand and image are stored by their visible name, not by ID. The IDs change every time the demo database is reset; the names stay the same. The category name is also what the test clicks in the filter.
+
 ### API helpers
 
 Helpers that call the API live in `utils/api/`, for example `registerUser()`. Tests that change an account, such as enabling TOTP, register a new user through the API so the shared test accounts stay unchanged.
+
+`loginUser()` logs in through the API and stores the access token in the `ApiClient`, which sends it with every following request.
+
+`createProduct()` looks up the IDs of the category, brand and image by name before it creates the product. With an ID that no longer exists, the API answers with a `500` instead of a validation error, so a stored ID would fail without a clear message. An unknown name now fails with `No item with name '...' found at /categories`.
+
+`createProduct()` is called after `loginUser()` logs in as admin, because creating products is an admin action. The demo API does not enforce this at the moment: `POST /products` also succeeds without a token. The login stays, so the test keeps working once the API does check it.
 
 ### TOTP
 
@@ -117,3 +128,18 @@ The site sends the postcode lookup twice. The second response overwrites a stree
 - an `issue` annotation on the `Register` describe block, so it shows up in the test report.
 
 Remove the workaround once it is confirmed that the double lookup is intended, or once it is fixed.
+
+### Product filter
+
+The filter test creates its own product, so it does not depend on the products that happen to be in the shop:
+
+1. Log in as admin and create a product in the category Hammer that is not eco-friendly, both through the API.
+2. Search for the product: it is shown.
+3. Turn on the filter for eco-friendly products only: the product disappears.
+4. Turn on the category filter Hammer: the product stays hidden, because the eco-friendly filter is still on.
+5. Turn off the eco-friendly filter: the product is shown again, so the category filter Hammer keeps it.
+
+- **Search and filters combine**: a filter keeps the search term, so after the search the list only holds the test product and each filter step checks that one product.
+- **Order of the steps**: the category filter is checked by turning off the eco-friendly filter, so the product goes from hidden to shown. A check that the product is still shown would pass on the old list, before the filter is applied. A change from hidden to shown only passes on the new list.
+- **Setup split**: the API login and opening the page are in `beforeEach`. Creating the product stays in the test, so a test only creates the product it uses. The name is unique per run, not per test, so two tests in one run should each use their own product file.
+- **Waiting for the filter**: `ProductPage` waits for the `/products` response after each filter change, so the next change does not start while the previous request is still running.
