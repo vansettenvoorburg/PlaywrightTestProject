@@ -21,10 +21,13 @@ test.describe('Product filter', () => {
     await productPage.search(product.name);
     await productPage.expectProductShown(product.name);
 
-    await productPage.filterByCategory(product.category);
-    await productPage.expectProductShown(product.name);
-
     await productPage.showOnlyEcoFriendly();
     await productPage.expectProductHidden(product.name);
+
+    await productPage.filterByCategory(product.category);
+    await productPage.expectProductHidden(product.name);
+
+    await productPage.removeEcoFriendlyFilter();
+    await productPage.expectProductShown(product.name);
   });
 });

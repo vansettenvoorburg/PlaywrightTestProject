@@ -24,7 +24,7 @@ export class ProductPage {
     return this.page.getByRole('checkbox', { name: 'Alleen milieuvriendelijke producten tonen' });
   }
 
-  private productCard(name: string) {
+  private productTitle(name: string) {
     return this.page.getByRole('heading', { name, level: 5 });
   }
 
@@ -38,25 +38,29 @@ export class ProductPage {
   }
 
   async filterByCategory(name: string): Promise<void> {
-    await this.checkFilter(this.categoryCheckbox(name));
+    await this.setFilter(this.categoryCheckbox(name), true);
   }
 
   async showOnlyEcoFriendly(): Promise<void> {
-    await this.checkFilter(this.ecoFriendlyCheckbox);
+    await this.setFilter(this.ecoFriendlyCheckbox, true);
+  }
+
+  async removeEcoFriendlyFilter(): Promise<void> {
+    await this.setFilter(this.ecoFriendlyCheckbox, false);
   }
 
   async expectProductShown(name: string): Promise<void> {
-    await expect(this.productCard(name)).toBeVisible();
+    await expect(this.productTitle(name)).toBeVisible();
   }
 
   async expectProductHidden(name: string): Promise<void> {
-    await expect(this.productCard(name)).toBeHidden();
+    await expect(this.productTitle(name)).toBeHidden();
   }
 
-  /** Waits for the filtered products, so a check afterwards does not see the old list. */
-  private async checkFilter(checkbox: Locator): Promise<void> {
+  /** Waits for the filtered products, so the next filter change does not overlap with this one. */
+  private async setFilter(checkbox: Locator, checked: boolean): Promise<void> {
     const filtered = this.page.waitForResponse((response) => new URL(response.url()).pathname === '/products');
-    await checkbox.check();
+    await checkbox.setChecked(checked);
     await filtered;
   }
 }

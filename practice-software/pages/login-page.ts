@@ -36,10 +36,6 @@ export class LoginPage {
     return this.page.getByRole('button', { name: 'TOTP verifiëren' });
   }
 
-  async expectLoaded(): Promise<void> {
-    await expect(this.title).toBeVisible();
-  }
-
   async login(email: string, password: string): Promise<void> {
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);
@@ -53,5 +49,9 @@ export class LoginPage {
   async verifyTotp(code: string): Promise<void> {
     await this.totpCodeInput.fill(code);
     await this.verifyTotpButton.click();
+  }
+
+  async expectLoaded(): Promise<void> {
+    await expect(this.title).toBeVisible();
   }
 }

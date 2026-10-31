@@ -135,9 +135,11 @@ The filter test creates its own product, so it does not depend on the products t
 
 1. Log in as admin and create a product in the category Hammer that is not eco-friendly, both through the API.
 2. Search for the product: it is shown.
-3. Turn on the category filter Hammer: the product is still shown.
-4. Turn on the filter for eco-friendly products only: the product disappears.
+3. Turn on the filter for eco-friendly products only: the product disappears.
+4. Turn on the category filter Hammer: the product stays hidden, because the eco-friendly filter is still on.
+5. Turn off the eco-friendly filter: the product is shown again, so the category filter Hammer keeps it.
 
 - **Search and filters combine**: a filter keeps the search term, so after the search the list only holds the test product and each filter step checks that one product.
+- **Order of the steps**: the category filter is checked by turning off the eco-friendly filter, so the product goes from hidden to shown. A check that the product is still shown would pass on the old list, before the filter is applied. A change from hidden to shown only passes on the new list.
 - **Setup split**: the API login and opening the page are in `beforeEach`. Creating the product stays in the test, so a test only creates the product it uses. The name is unique per run, not per test, so two tests in one run should each use their own product file.
-- **Waiting for the filter**: `ProductPage` waits for the `/products` response after it checks a filter. Without that wait, "the product is still shown" could pass on the old list, before the filter is applied.
+- **Waiting for the filter**: `ProductPage` waits for the `/products` response after each filter change, so the next change does not start while the previous request is still running.

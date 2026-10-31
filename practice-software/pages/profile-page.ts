@@ -65,6 +65,16 @@ export class ProfilePage {
     return this.page.getByRole('status').filter({ hasText: 'TOTP verified and enabled successfully' });
   }
 
+  async readTotpSecret(): Promise<string> {
+    await expect(this.totpSecret).not.toBeEmpty();
+    return (await this.totpSecret.innerText()).trim();
+  }
+
+  async activateTotp(code: string): Promise<void> {
+    await this.totpCodeInput.fill(code);
+    await this.verifyTotpButton.click();
+  }
+
   async expectLoaded(): Promise<void> {
     await expect(this.title).toBeVisible();
   }
@@ -79,16 +89,6 @@ export class ProfilePage {
     await expect(this.cityInput).toHaveValue(user.city);
     await expect(this.stateInput).toHaveValue(user.state);
     await expect(this.countrySelect).toHaveValue(user.country);
-  }
-
-  async readTotpSecret(): Promise<string> {
-    await expect(this.totpSecret).not.toBeEmpty();
-    return (await this.totpSecret.innerText()).trim();
-  }
-
-  async activateTotp(code: string): Promise<void> {
-    await this.totpCodeInput.fill(code);
-    await this.verifyTotpButton.click();
   }
 
   async expectTotpEnabled(): Promise<void> {

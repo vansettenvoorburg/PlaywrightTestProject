@@ -21,6 +21,9 @@ export async function createProduct(apiClient: ApiClient, product: Product) {
 /** IDs change when the demo database is reset, so they are looked up by their visible text. */
 async function findId(apiClient: ApiClient, path: string, field: string, value: string) {
   const result = await apiClient.get(path);
+  if (result.status !== 200) {
+    throw new Error(`Fetching ${path} failed with status ${result.status}: ${JSON.stringify(result.body)}`);
+  }
   const item = (result.body as Record<string, string>[]).find((entry) => entry[field] === value);
   if (!item) {
     throw new Error(`No item with ${field} '${value}' found at ${path}`);

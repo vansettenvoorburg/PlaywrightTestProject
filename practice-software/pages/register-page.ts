@@ -65,10 +65,6 @@ export class RegisterPage {
     return this.page.getByRole('button', { name: 'Registreren' });
   }
 
-  async expectLoaded(): Promise<void> {
-    await expect(this.title).toBeVisible();
-  }
-
   async registerWithAllFields(user: Registration): Promise<void> {
     await this.fillRequiredFields(user);
     await this.fillOtherFields(user);
@@ -89,14 +85,18 @@ export class RegisterPage {
     await this.passwordInput.fill(user.password);
   }
 
+  async submit(): Promise<void> {
+    await this.registerButton.click();
+  }
+
+  async expectLoaded(): Promise<void> {
+    await expect(this.title).toBeVisible();
+  }
+
   async expectAutoFilledAddress(user: Registration): Promise<void> {
     await expect(this.streetInput).toHaveValue(user.street);
     await expect(this.cityInput).toHaveValue(user.city);
     await expect(this.stateInput).toHaveValue(user.state);
-  }
-
-  async submit(): Promise<void> {
-    await this.registerButton.click();
   }
 
   private async fillOtherFields(user: Registration): Promise<void> {
