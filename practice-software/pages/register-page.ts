@@ -121,8 +121,15 @@ export class RegisterPage {
     await expect(this.stateInput).toHaveValue(user.state);
   }
 
+  // TODO: Workaround. The site sends the postcode lookup twice, and the second response overwrites
+  // the street, city and state that were already filled in. Keep this until it is confirmed that the
+  // double lookup is intended, or until it is fixed as a bug.
   private async waitForAddressLookups(count: number): Promise<void> {
     let received = 0;
-    await this.page.waitForResponse(response => response.url().includes('/postcode-lookup') && ++received === count);
+    await this.page.waitForResponse(response => {
+      if (!response.url().includes('/postcode-lookup')) return false;
+      received++;
+      return received === count;
+    });
   }
 }

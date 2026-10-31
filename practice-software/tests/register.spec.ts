@@ -2,7 +2,12 @@ import { test } from '../fixtures/pages';
 import { customAddress, lookedUpAddress, registrationUser } from '../test-data/users';
 import { uniqueEmail, uniquePassword } from '../utils/unique-credentials';
 
-test.describe('Register', () => {
+test.describe('Register', {
+  annotation: {
+    type: 'issue',
+    description: 'Workaround: the site sends the postcode lookup twice. Remove once it is confirmed as intended or fixed.',
+  },
+}, () => {
   test.beforeEach(async ({ productPage, loginPage, registerPage }) => {
     await productPage.goto();
     await productPage.menu.goToSignIn();
