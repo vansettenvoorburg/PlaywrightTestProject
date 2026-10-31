@@ -4,9 +4,9 @@ import path from 'node:path';
 process.loadEnvFile(path.resolve(__dirname, '.env'));
 
 const requiredEnv = [
-  'BASE_URL',
-  'ADMIN_NAME', 'ADMIN_EMAIL', 'ADMIN_PASSWORD',
-  'USER_NAME', 'USER_EMAIL', 'USER_PASSWORD',
+  'BASE_URL', 'API_URL',
+  'ADMIN_EMAIL', 'ADMIN_PASSWORD',
+  'USER_EMAIL', 'USER_PASSWORD',
 ];
 for (const name of requiredEnv) {
   if (!process.env[name]) throw new Error(`${name} is missing in .env`);
@@ -23,6 +23,7 @@ export default defineConfig({
   use: {
     baseURL: process.env.BASE_URL,
     locale: 'nl-NL',
+    testIdAttribute: 'data-test',
     headless: false,
     actionTimeout: 10000,
     screenshot: 'only-on-failure',
