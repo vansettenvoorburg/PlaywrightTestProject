@@ -1,7 +1,8 @@
 import { mergeTests } from '@playwright/test';
 import { test as apiTest } from '../fixtures/api';
 import { test as pagesTest } from '../fixtures/pages';
-import { totpUser } from '../test-data/users';
+import { fullName } from '../test-data/user';
+import { totpUser } from '../test-data/users/totp-user';
 import { registerUser } from '../utils/api/register-user';
 import { uniqueEmail, uniquePassword } from '../utils/unique-credentials';
 import { fetchServerTimeMs } from '../utils/server-time';
@@ -30,17 +31,17 @@ test.describe('Login', () => {
     const user = { ...totpUser, email: uniqueEmail(), password: uniquePassword() };
     await registerUser(api, user);
     await loginPage.login(user.email, user.password);
-    await loginPage.menu.goToMyProfile(user.name);
+    await loginPage.menu.goToMyProfile(fullName(user));
     await profilePage.expectLoaded();
 
     const totpSecret = await profilePage.readTotpSecret();
     await profilePage.activateTotp(generateTotp(totpSecret, await fetchServerTimeMs(api)));
     await profilePage.expectTotpEnabled();
 
-    await profilePage.menu.signOut(user.name);
+    await profilePage.menu.signOut(fullName(user));
     await loginPage.expectLoaded();
     await loginPage.login(user.email, user.password);
     await loginPage.verifyTotp(generateTotp(totpSecret, await fetchServerTimeMs(api)));
-    await loginPage.menu.expectLoggedInAsUser(user.name);
+    await loginPage.menu.expectLoggedInAsUser(fullName(user));
   });
 });

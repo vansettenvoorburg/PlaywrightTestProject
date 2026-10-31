@@ -9,59 +9,59 @@ export class ProfilePage {
     this.menu = new NavMenu(page);
   }
 
-  get title() {
+  private get title() {
     return this.page.getByRole('heading', { name: 'Profiel' });
   }
 
-  get firstNameInput() {
+  private get firstNameInput() {
     return this.page.getByLabel('Voornaam');
   }
 
-  get lastNameInput() {
+  private get lastNameInput() {
     return this.page.getByLabel('Achternaam');
   }
 
-  get emailInput() {
+  private get emailInput() {
     return this.page.getByLabel('E-mailadres');
   }
 
-  get phoneInput() {
+  private get phoneInput() {
     return this.page.getByLabel('Telefoon');
   }
 
-  get streetInput() {
+  private get streetInput() {
     return this.page.getByLabel('Straat');
   }
 
-  get postalCodeInput() {
+  private get postalCodeInput() {
     return this.page.getByLabel('Postcode');
   }
 
-  get cityInput() {
+  private get cityInput() {
     return this.page.getByLabel('Stad');
   }
 
-  get stateInput() {
+  private get stateInput() {
     return this.page.getByLabel('Provincie');
   }
 
-  get countrySelect() {
+  private get countrySelect() {
     return this.page.getByLabel('Land');
   }
 
-  get totpSecret() {
+  private get totpSecret() {
     return this.page.locator('[data-test="totp-secret"]');
   }
 
-  get totpCodeInput() {
+  private get totpCodeInput() {
     return this.page.getByLabel('TOTP code');
   }
 
-  get verifyTotpButton() {
+  private get verifyTotpButton() {
     return this.page.getByRole('button', { name: 'TOTP verifiëren' });
   }
 
-  get totpEnabledMessage() {
+  private get totpEnabledMessage() {
     return this.page.getByRole('status').filter({ hasText: 'TOTP verified and enabled successfully' });
   }
 

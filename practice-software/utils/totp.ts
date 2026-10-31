@@ -13,10 +13,6 @@ export function generateTotp(secret: string, timeMs: number) {
   return keepLastSixDigits(number);
 }
 
-export function msUntilTotpExpires(timeMs: number) {
-  return TOTP_PERIOD_MS - (timeMs % TOTP_PERIOD_MS);
-}
-
 function convertSecretToBytes(secret: string) {
   const secretWithoutPadding = secret.replace(/=+$/, '').toUpperCase();
   const secretAsBits = [...secretWithoutPadding]

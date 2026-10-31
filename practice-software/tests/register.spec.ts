@@ -1,6 +1,7 @@
 import { test } from '../fixtures/pages';
-import { customAddress, lookedUpAddress, registrationUser } from '../test-data/users';
-import { uniqueEmail, uniquePassword } from '../utils/unique-credentials';
+import { fullName } from '../test-data/user';
+import { registrationUserCustomAddress } from '../test-data/users/registration-user-custom-address';
+import { registrationUserLookedUpAddress } from '../test-data/users/registration-user-looked-up-address';
 
 test.describe('Register', {
   annotation: {
@@ -16,23 +17,23 @@ test.describe('Register', {
   });
 
   test('user can register with every field filled in', async ({ registerPage, loginPage, profilePage }) => {
-    const user = { ...registrationUser, ...customAddress, email: uniqueEmail(), password: uniquePassword() };
+    const user = registrationUserCustomAddress;
     await registerPage.registerWithAllFields(user);
 
     await loginPage.expectLoaded();
     await loginPage.login(user.email, user.password);
-    await loginPage.menu.goToMyProfile(user.name);
+    await loginPage.menu.goToMyProfile(fullName(user));
     await profilePage.expectLoaded();
     await profilePage.expectDetails(user);
   });
 
   test('user can register with required fields and a looked-up address', async ({ registerPage, loginPage, profilePage }) => {
-    const user = { ...registrationUser, ...lookedUpAddress, email: uniqueEmail(), password: uniquePassword() };
+    const user = registrationUserLookedUpAddress;
     await registerPage.registerWithRequiredFields(user);
 
     await loginPage.expectLoaded();
     await loginPage.login(user.email, user.password);
-    await loginPage.menu.goToMyProfile(user.name);
+    await loginPage.menu.goToMyProfile(fullName(user));
     await profilePage.expectLoaded();
     await profilePage.expectDetails(user);
   });

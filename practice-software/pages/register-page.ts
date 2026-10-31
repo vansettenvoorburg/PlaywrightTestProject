@@ -1,20 +1,8 @@
 import { expect, Page } from '@playwright/test';
 import { NavMenu } from './components/nav-menu';
+import { User } from '../test-data/user';
 
-export type Registration = {
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  country: string;
-  postalCode: string;
-  houseNumber: string;
-  street: string;
-  city: string;
-  state: string;
-  phone: string;
-  email: string;
-  password: string;
-};
+export type Registration = Required<User>;
 
 export class RegisterPage {
   readonly menu: NavMenu;
@@ -23,59 +11,59 @@ export class RegisterPage {
     this.menu = new NavMenu(page);
   }
 
-  get title() {
+  private get title() {
     return this.page.getByRole('heading', { name: 'Klantregistratie' });
   }
 
-  get firstNameInput() {
+  private get firstNameInput() {
     return this.page.getByLabel('Voornaam');
   }
 
-  get lastNameInput() {
+  private get lastNameInput() {
     return this.page.getByLabel('Achternaam');
   }
 
-  get dateOfBirthInput() {
+  private get dateOfBirthInput() {
     return this.page.getByLabel('Geboortedatum');
   }
 
-  get countrySelect() {
+  private get countrySelect() {
     return this.page.getByLabel('Land');
   }
 
-  get postalCodeInput() {
+  private get postalCodeInput() {
     return this.page.getByLabel('Postcode');
   }
 
-  get houseNumberInput() {
+  private get houseNumberInput() {
     return this.page.getByLabel('Huisnummer');
   }
 
-  get streetInput() {
+  private get streetInput() {
     return this.page.getByLabel('Straat');
   }
 
-  get cityInput() {
+  private get cityInput() {
     return this.page.getByLabel('Stad');
   }
 
-  get stateInput() {
+  private get stateInput() {
     return this.page.getByLabel('Provincie');
   }
 
-  get phoneInput() {
+  private get phoneInput() {
     return this.page.getByLabel('Telefoon');
   }
 
-  get emailInput() {
+  private get emailInput() {
     return this.page.getByLabel('E-mailadres');
   }
 
-  get passwordInput() {
+  private get passwordInput() {
     return this.page.getByLabel('Wachtwoord');
   }
 
-  get registerButton() {
+  private get registerButton() {
     return this.page.getByRole('button', { name: 'Registreren' });
   }
 
@@ -95,7 +83,7 @@ export class RegisterPage {
     await this.registerButton.click();
   }
 
-  async fillRequiredFields(user: Registration): Promise<void> {
+  private async fillRequiredFields(user: Registration): Promise<void> {
     await this.firstNameInput.fill(user.firstName);
     await this.lastNameInput.fill(user.lastName);
     await this.dateOfBirthInput.fill(user.dateOfBirth);
@@ -109,13 +97,13 @@ export class RegisterPage {
     await this.passwordInput.fill(user.password);
   }
 
-  async fillOtherFields(user: Registration): Promise<void> {
+  private async fillOtherFields(user: Registration): Promise<void> {
     await this.streetInput.fill(user.street);
     await this.cityInput.fill(user.city);
     await this.stateInput.fill(user.state);
   }
 
-  async expectAutoFilledValues(user: Registration): Promise<void> {
+  private async expectAutoFilledValues(user: Registration): Promise<void> {
     await expect(this.streetInput).toHaveValue(user.street);
     await expect(this.cityInput).toHaveValue(user.city);
     await expect(this.stateInput).toHaveValue(user.state);

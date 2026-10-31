@@ -8,31 +8,31 @@ export class LoginPage {
     this.menu = new NavMenu(page);
   }
 
-  get title() {
+  private get title() {
     return this.page.getByRole('heading', { name: 'Inloggen' });
   }
 
-  get emailInput() {
+  private get emailInput() {
     return this.page.getByLabel('E-mailadres');
   }
 
-  get passwordInput() {
+  private get passwordInput() {
     return this.page.getByLabel('Wachtwoord');
   }
 
-  get loginButton() {
+  private get loginButton() {
     return this.page.getByRole('button', { name: 'Login' });
   }
 
-  get registerLink() {
+  private get registerLink() {
     return this.page.getByRole('link', { name: 'Register your account' });
   }
 
-  get totpCodeInput() {
+  private get totpCodeInput() {
     return this.page.getByLabel('TOTP-code');
   }
 
-  get verifyTotpButton() {
+  private get verifyTotpButton() {
     return this.page.getByRole('button', { name: 'TOTP verifiëren' });
   }
 
