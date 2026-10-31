@@ -7,8 +7,8 @@ type NewUser = {
   password: string;
 };
 
-export async function registerUser(api: ApiClient, user: NewUser) {
-  const result = await api.post('/users/register', {
+export async function registerUser(apiClient: ApiClient, user: NewUser) {
+  const result = await apiClient.post('/users/register', {
     first_name: user.firstName,
     last_name: user.lastName,
     email: user.email,

@@ -28,21 +28,21 @@ test.describe('Login', () => {
     await loginPage.menu.expectLoggedInAsUser(fullName(customerUser));
   });
 
-  test('user can enable TOTP and log in with it', async ({ api, loginPage, profilePage }) => {
+  test('user can enable TOTP and log in with it', async ({ apiClient, loginPage, profilePage }) => {
     const user = totpUser;
-    await registerUser(api, user);
+    await registerUser(apiClient, user);
     await loginPage.login(user.email, user.password);
     await loginPage.menu.goToMyProfile(fullName(user));
     await profilePage.expectLoaded();
 
     const totpSecret = await profilePage.readTotpSecret();
-    await profilePage.activateTotp(generateTotp(totpSecret, await fetchServerTimeMs(api)));
+    await profilePage.activateTotp(generateTotp(totpSecret, await fetchServerTimeMs(apiClient)));
     await profilePage.expectTotpEnabled();
 
     await profilePage.menu.signOut(fullName(user));
     await loginPage.expectLoaded();
     await loginPage.login(user.email, user.password);
-    await loginPage.verifyTotp(generateTotp(totpSecret, await fetchServerTimeMs(api)));
+    await loginPage.verifyTotp(generateTotp(totpSecret, await fetchServerTimeMs(apiClient)));
     await loginPage.menu.expectLoggedInAsUser(fullName(user));
   });
 });

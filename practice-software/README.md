@@ -45,7 +45,7 @@ test.beforeEach(async ({ productPage, loginPage }) => {
 
 A fixture only creates the page object and never navigates. Navigation such as `productPage.goto()` stays visible in the test, so a reader can see where the test starts.
 
-The `api` fixture in `fixtures/api.ts` creates an `ApiClient` for `API_URL` and closes it after the test. A spec that needs both pages and the API combines the fixtures:
+The `apiClient` fixture in `fixtures/api.ts` creates an `ApiClient` for `API_URL` and closes it after the test. A spec that needs both pages and the API combines the fixtures:
 
 ```ts
 const test = mergeTests(pagesTest, apiTest);
