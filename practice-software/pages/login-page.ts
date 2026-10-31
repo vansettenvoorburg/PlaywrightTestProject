@@ -24,6 +24,10 @@ export class LoginPage {
     return this.page.getByRole('button', { name: 'Login' });
   }
 
+  get registerLink() {
+    return this.page.getByRole('link', { name: 'Register your account' });
+  }
+
   get totpCodeInput() {
     return this.page.getByLabel('TOTP-code');
   }
@@ -40,6 +44,10 @@ export class LoginPage {
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);
     await this.loginButton.click();
+  }
+
+  async goToRegister(): Promise<void> {
+    await this.registerLink.click();
   }
 
   async verifyTotp(code: string): Promise<void> {

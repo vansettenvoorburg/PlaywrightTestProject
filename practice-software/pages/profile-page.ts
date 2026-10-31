@@ -1,5 +1,6 @@
 import { expect, Page } from '@playwright/test';
 import { NavMenu } from './components/nav-menu';
+import { Registration } from './register-page';
 
 export class ProfilePage {
   readonly menu: NavMenu;
@@ -10,6 +11,42 @@ export class ProfilePage {
 
   get title() {
     return this.page.getByRole('heading', { name: 'Profiel' });
+  }
+
+  get firstNameInput() {
+    return this.page.getByLabel('Voornaam');
+  }
+
+  get lastNameInput() {
+    return this.page.getByLabel('Achternaam');
+  }
+
+  get emailInput() {
+    return this.page.getByLabel('E-mailadres');
+  }
+
+  get phoneInput() {
+    return this.page.getByLabel('Telefoon');
+  }
+
+  get streetInput() {
+    return this.page.getByLabel('Straat');
+  }
+
+  get postalCodeInput() {
+    return this.page.getByLabel('Postcode');
+  }
+
+  get cityInput() {
+    return this.page.getByLabel('Stad');
+  }
+
+  get stateInput() {
+    return this.page.getByLabel('Provincie');
+  }
+
+  get countrySelect() {
+    return this.page.getByLabel('Land');
   }
 
   get totpSecret() {
@@ -30,6 +67,18 @@ export class ProfilePage {
 
   async expectLoaded(): Promise<void> {
     await expect(this.title).toBeVisible();
+  }
+
+  async expectDetails(user: Registration): Promise<void> {
+    await expect(this.firstNameInput).toHaveValue(user.firstName);
+    await expect(this.lastNameInput).toHaveValue(user.lastName);
+    await expect(this.emailInput).toHaveValue(user.email);
+    await expect(this.phoneInput).toHaveValue(user.phone);
+    await expect(this.streetInput).toHaveValue(user.street);
+    await expect(this.postalCodeInput).toHaveValue(user.postalCode);
+    await expect(this.cityInput).toHaveValue(user.city);
+    await expect(this.stateInput).toHaveValue(user.state);
+    await expect(this.countrySelect).toHaveValue(user.country);
   }
 
   async readTotpSecret(): Promise<string> {
