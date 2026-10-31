@@ -1,13 +1,7 @@
 import { ApiClient } from '../../../api-helper/api-client';
+import { User } from '../../test-data/user';
 
-type NewUser = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-};
-
-export async function registerUser(apiClient: ApiClient, user: NewUser) {
+export async function registerUser(apiClient: ApiClient, user: User) {
   const result = await apiClient.post('/users/register', {
     first_name: user.firstName,
     last_name: user.lastName,

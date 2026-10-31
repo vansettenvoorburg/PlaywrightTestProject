@@ -1,7 +1,7 @@
-import { User } from '../user';
+import { Registration } from '../user';
 import { uniqueEmail, uniquePassword } from '../../utils/unique-credentials';
 
-export const registrationUserCustomAddress: Required<User> = {
+export const registrationUserCustomAddress: Registration = {
   firstName: 'Register',
   lastName: 'Tester',
   dateOfBirth: '1990-01-15',

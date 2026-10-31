@@ -48,8 +48,12 @@ export class ApiClient {
     return {
       status: response.status(),
       headers: response.headers(),
-      body: text ? JSON.parse(text) : undefined,
+      body: text ? this.parseBody(text, response.headers()['content-type']) : undefined,
     };
+  }
+
+  private parseBody(text: string, contentType = ''): unknown {
+    return contentType.includes('application/json') ? JSON.parse(text) : text;
   }
 
   private authorizationHeader(): Record<string, string> {

@@ -1,6 +1,6 @@
 import { expect, Page } from '@playwright/test';
 import { NavMenu } from './components/nav-menu';
-import { Registration } from './register-page';
+import { Registration } from '../test-data/user';
 
 export class ProfilePage {
   readonly menu: NavMenu;
@@ -50,7 +50,7 @@ export class ProfilePage {
   }
 
   private get totpSecret() {
-    return this.page.locator('[data-test="totp-secret"]');
+    return this.page.getByTestId('totp-secret');
   }
 
   private get totpCodeInput() {

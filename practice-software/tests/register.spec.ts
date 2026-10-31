@@ -29,7 +29,9 @@ test.describe('Register', {
 
   test('user can register with required fields and a looked-up address', async ({ registerPage, loginPage, profilePage }) => {
     const user = registrationUserLookedUpAddress;
-    await registerPage.registerWithRequiredFields(user);
+    await registerPage.fillRequiredFields(user);
+    await registerPage.expectAutoFilledAddress(user);
+    await registerPage.submit();
 
     await loginPage.expectLoaded();
     await loginPage.login(user.email, user.password);

@@ -1,8 +1,6 @@
 import { expect, Page } from '@playwright/test';
 import { NavMenu } from './components/nav-menu';
-import { User } from '../test-data/user';
-
-export type Registration = Required<User>;
+import { Registration } from '../test-data/user';
 
 export class RegisterPage {
   readonly menu: NavMenu;
@@ -74,16 +72,10 @@ export class RegisterPage {
   async registerWithAllFields(user: Registration): Promise<void> {
     await this.fillRequiredFields(user);
     await this.fillOtherFields(user);
-    await this.registerButton.click();
+    await this.submit();
   }
 
-  async registerWithRequiredFields(user: Registration): Promise<void> {
-    await this.fillRequiredFields(user);
-    await this.expectAutoFilledValues(user);
-    await this.registerButton.click();
-  }
-
-  private async fillRequiredFields(user: Registration): Promise<void> {
+  async fillRequiredFields(user: Registration): Promise<void> {
     await this.firstNameInput.fill(user.firstName);
     await this.lastNameInput.fill(user.lastName);
     await this.dateOfBirthInput.fill(user.dateOfBirth);
@@ -97,16 +89,20 @@ export class RegisterPage {
     await this.passwordInput.fill(user.password);
   }
 
+  async expectAutoFilledAddress(user: Registration): Promise<void> {
+    await expect(this.streetInput).toHaveValue(user.street);
+    await expect(this.cityInput).toHaveValue(user.city);
+    await expect(this.stateInput).toHaveValue(user.state);
+  }
+
+  async submit(): Promise<void> {
+    await this.registerButton.click();
+  }
+
   private async fillOtherFields(user: Registration): Promise<void> {
     await this.streetInput.fill(user.street);
     await this.cityInput.fill(user.city);
     await this.stateInput.fill(user.state);
-  }
-
-  private async expectAutoFilledValues(user: Registration): Promise<void> {
-    await expect(this.streetInput).toHaveValue(user.street);
-    await expect(this.cityInput).toHaveValue(user.city);
-    await expect(this.stateInput).toHaveValue(user.state);
   }
 
   // TODO: Workaround. The site sends the postcode lookup twice, and the second response overwrites

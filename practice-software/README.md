@@ -56,7 +56,7 @@ const test = mergeTests(pagesTest, apiTest);
 Every test user is based on one `User` type in `test-data/user.ts`. Every user can log in, so `firstName`, `lastName`, `email` and `password` are required; the other fields are optional.
 
 - `test-data/users/` holds one file per test user, for example `totp-user.ts` and `registration-user-custom-address.ts`. Each user only fills in the fields its tests use.
-- A user that fills in the whole registration form is typed as `Required<User>`, so a forgotten field is a type error in the data file. `RegisterPage` only accepts such a complete user (`Registration = Required<User>`).
+- A user that fills in the whole registration form is typed as `Registration` (`Required<User>`, also in `test-data/user.ts`), so a forgotten field is a type error in the data file. `RegisterPage` and `ProfilePage` only accept such a complete user.
 - The existing accounts `adminUser` and `customerUser` take their email address and password from `.env`, because those can differ per environment. Their names are stored in the user file.
 - The display name is not stored; `fullName(user)` derives it from the first and last name.
 - For new users, email addresses and passwords must be unique per run, so they come from `utils/unique-credentials.ts`. The user file sets them itself, so the test uses the user as is:
@@ -90,20 +90,22 @@ There are two tests:
 
 #### How `RegisterPage` is built
 
-The page object follows the two tests, from one public method per flow down to private steps:
+The page object follows the two tests:
 
 ```
-public:   registerWithAllFields(user)          registerWithRequiredFields(user)
-private:  ├── fillRequiredFields(user)         ├── fillRequiredFields(user)
-          ├── fillOtherFields(user)            ├── expectAutoFilledValues(user)
-          └── click Register                   └── click Register
+Every field filled in                  Required fields only (steps in the test)
+registerWithAllFields(user)            fillRequiredFields(user)
+├── fillRequiredFields(user)           expectAutoFilledAddress(user)
+├── fillOtherFields(user)  (private)   submit()
+└── submit()
 ```
 
-- **One method per flow**: a test registers in one line, so the test reads as the scenario and not as a list of fields.
-- **Only the flows are public**: the steps are private, so a test cannot run them in a different order or skip one. The class lists the public methods first, then the private steps in the order they are called.
+- **Every field filled in is one method**: nothing is checked during this flow, so the test registers in one line and reads as the scenario and not as a list of fields.
+- **Required fields only is three steps in the test**: the check of the looked-up address is part of what this test verifies, so it stays visible in the test instead of being hidden inside an action. Actions and checks are not mixed in one method.
+- **Check before submitting**: the looked-up address can only be checked while the form is still open, so the test calls `expectAutoFilledAddress()` before `submit()`.
 - **Shared required fields**: both flows fill the same required fields, so they live in one method, `fillRequiredFields()`. The flows only differ in what happens to the street, city and state.
-- **Street, city and state separately**: `fillOtherFields()` fills them in by hand; `expectAutoFilledValues()` checks what the postcode lookup filled in. These are the only two places that touch those fields.
-- **Check before submitting**: the looked-up address can only be checked while the form is still open, so `expectAutoFilledValues()` runs inside the flow, before the Register button is clicked.
+- **Street, city and state separately**: `fillOtherFields()` fills them in by hand; `expectAutoFilledAddress()` checks what the postcode lookup filled in. These are the only two places that touch those fields.
+- **Order in the class**: the public methods come first, then the private steps in the order they are called.
 - **One user object**: every method takes a `Registration` (`Required<User>`) instead of separate values, so the test data decides what is filled in and the type makes sure nothing is missing.
 - **Waiting for the lookup is hidden**: `waitForAddressLookups()` is a private step of `fillRequiredFields()`. The test does not need to know that the form waits for an API response; see the workaround below. The wait starts before the postcode is filled in, so the response cannot arrive before Playwright listens for it.
 

@@ -13,6 +13,8 @@ export type User = {
   phone?: string;
 };
 
+export type Registration = Required<User>;
+
 export function fullName(user: User): string {
   return `${user.firstName} ${user.lastName}`;
 }

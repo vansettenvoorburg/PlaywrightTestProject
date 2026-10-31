@@ -23,6 +23,7 @@ export default defineConfig({
   use: {
     baseURL: process.env.BASE_URL,
     locale: 'nl-NL',
+    testIdAttribute: 'data-test',
     headless: false,
     actionTimeout: 10000,
     screenshot: 'only-on-failure',
