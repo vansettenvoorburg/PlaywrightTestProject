@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '../fixtures/api';
-import { findCoordinates } from '../utils/api/find-coordinates';
-import { getCurrentWeather } from '../utils/api/get-current-weather';
+import { findCoordinates } from '../utils/find-coordinates';
+import { getCurrentWeather } from '../utils/get-current-weather';
 
 const cities = [
   { location: 'Amsterdam,NL', id: 2759794 },

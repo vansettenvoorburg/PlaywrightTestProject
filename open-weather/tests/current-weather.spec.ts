@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '../fixtures/api';
-import { Coordinates, findCoordinates } from '../utils/api/find-coordinates';
-import { currentWeatherPath, getCurrentWeather } from '../utils/api/get-current-weather';
+import { Coordinates, findCoordinates } from '../utils/find-coordinates';
+import { currentWeatherPath, getCurrentWeather } from '../utils/get-current-weather';
 
 test.describe('Current weather', () => {
   let utrechtCoordinates: Coordinates;

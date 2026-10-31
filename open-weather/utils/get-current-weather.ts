@@ -1,5 +1,5 @@
-import { ApiClient } from '../../../api-helper/api-client';
-import { CurrentWeather } from '../../types/current-weather';
+import { ApiClient } from '../../api-helper/api-client';
+import { CurrentWeather } from '../types/current-weather';
 
 export const currentWeatherPath = '/data/2.5/weather';
 

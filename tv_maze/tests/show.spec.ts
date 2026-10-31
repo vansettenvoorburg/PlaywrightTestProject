@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '../fixtures/api';
-import { getShow } from '../utils/api/get-show';
-import { searchShows } from '../utils/api/search-shows';
+import { getShow } from '../utils/get-show';
+import { searchShows } from '../utils/search-shows';
 
 test.describe('Show information', () => {
   test('returns a URL that contains the show ID', async ({ apiClient }) => {
