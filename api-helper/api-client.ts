@@ -16,21 +16,25 @@ export class ApiClient {
     this.authorizationToken = token;
   }
 
-  async get(path: string): Promise<ApiResult> {
+  async get(path: string, responseCheckCriteria: { expectedStatus?: number } = {}): Promise<ApiResult> {
     const context = await this.getRequestContext();
     const response = await context.get(`${this.baseUrl}${path}`, {
       headers: this.authorizationHeader(),
     });
-    return this.toApiResult(response);
+    const result = await this.toApiResult(response);
+    this.checkStatus('GET', path, result, responseCheckCriteria.expectedStatus);
+    return result;
   }
 
-  async post(path: string, body: unknown): Promise<ApiResult> {
+  async post(path: string, body: unknown, responseCheckCriteria: { expectedStatus?: number } = {}): Promise<ApiResult> {
     const context = await this.getRequestContext();
     const response = await context.post(`${this.baseUrl}${path}`, {
       data: body,
       headers: this.authorizationHeader(),
     });
-    return this.toApiResult(response);
+    const result = await this.toApiResult(response);
+    this.checkStatus('POST', path, result, responseCheckCriteria.expectedStatus);
+    return result;
   }
 
   async close(): Promise<void> {
@@ -50,6 +54,12 @@ export class ApiClient {
       headers: response.headers(),
       body: text ? this.parseBody(text, response.headers()['content-type']) : undefined,
     };
+  }
+
+  private checkStatus(method: string, path: string, result: ApiResult, expectedStatus?: number): void {
+    if (expectedStatus !== undefined && result.status !== expectedStatus) {
+      throw new Error(`${method} ${path} returned status ${result.status}, expected ${expectedStatus}: ${JSON.stringify(result.body)}`);
+    }
   }
 
   private parseBody(text: string, contentType = ''): unknown {
