@@ -1,4 +1,4 @@
-import { ApiClient } from '../../../api-helper/api-client';
+import { ApiClient } from '../../api-helper/api-client';
 
 export interface Coordinates {
   lat: number;
